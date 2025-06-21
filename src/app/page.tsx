@@ -96,7 +96,7 @@ export default function AdminDashboard() {
       } else {
         alert("Invalid credentials")
       }
-    } catch (error) {
+    } catch {
       alert("Login failed")
     } finally {
       setLoading(false)
@@ -162,7 +162,7 @@ export default function AdminDashboard() {
       } else {
         alert("Failed to add employee")
       }
-    } catch (error) {
+    } catch {
       alert("Error adding employee")
     }
   }
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
         } else {
           alert("Failed to delete employee")
         }
-      } catch (error) {
+      } catch {
         alert("Error deleting employee")
       }
     }
@@ -219,7 +219,7 @@ export default function AdminDashboard() {
       } else {
         alert("Failed to enable login")
       }
-    } catch (error) {
+    } catch {
       alert("Error enabling login")
     }
   }
@@ -242,7 +242,7 @@ export default function AdminDashboard() {
         } else {
           alert("Failed to reset password")
         }
-      } catch (error) {
+      } catch {
         alert("Error resetting password")
       }
     }
@@ -321,7 +321,7 @@ export default function AdminDashboard() {
               <CardContent className="flex items-center p-6">
                 <Clock className="h-8 w-8 text-green-600" />
                 <div className="ml-4">
-                  <p className="text-sm font-medium text-gray-600">Today's Attendance</p>
+                  <p className="text-sm font-medium text-gray-600">Today&aposs Attendance</p>
                   <p className="text-2xl font-bold text-gray-900">{stats.today_attendance}</p>
                 </div>
               </CardContent>

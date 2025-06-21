@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Clock, User, QrCode, TrendingUp, LogOut } from "lucide-react"
 import QRCode from "qrcode"
+import Image from "next/image"
 
 interface EmployeeProfile {
   employee_id: string
@@ -77,7 +78,7 @@ export default function EmployeeDashboard() {
       setIsAuthenticated(true)
       fetchEmployeeData(savedToken)
     }
-  }, [])
+  })
 
   useEffect(() => {
     if (isAuthenticated && token) {
@@ -107,7 +108,7 @@ export default function EmployeeDashboard() {
         const errorData = await response.json()
         alert(errorData.detail || "Invalid credentials")
       }
-    } catch (error) {
+    } catch {
       alert("Login failed")
     } finally {
       setLoading(false)
@@ -216,7 +217,7 @@ export default function EmployeeDashboard() {
               {loading ? "Logging in..." : "Login"}
             </Button>
             <div className="text-center text-sm text-gray-600">
-              <p>Contact your administrator if you don't have login credentials</p>
+              <p>Contact your administrator if you don&apost have login credentials</p>
             </div>
           </CardContent>
         </Card>
@@ -424,7 +425,7 @@ export default function EmployeeDashboard() {
                   <>
                     <div className="flex justify-center">
                       <div className="p-4 bg-white border-2 border-gray-200 rounded-lg shadow-sm">
-                        <img src={qrCodeUrl || "/placeholder.svg"} alt="Employee QR Code" className="w-64 h-64" />
+                        <Image src={qrCodeUrl || "/placeholder.svg"} alt="Employee QR Code" className="w-64 h-64" />
                       </div>
                     </div>
                     {profile && (
