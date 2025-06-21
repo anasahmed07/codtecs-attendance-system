@@ -1,0 +1,12 @@
+opencv-python
+pillow
+numpy
+pyzbar
+pymongo
+fastapi
+uvicorn
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+qrcode[pil]
+PyJWT
