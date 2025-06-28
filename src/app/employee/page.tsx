@@ -81,13 +81,13 @@ export default function EmployeeDashboard() {
       setIsAuthenticated(true)
       fetchEmployeeData(savedToken)
     }
-  })
+  }, [])
 
   useEffect(() => {
     if (isAuthenticated && token) {
       fetchAttendanceData(selectedMonth, selectedYear)
     }
-  }, [selectedMonth, selectedYear, isAuthenticated, token])
+  }, [selectedMonth, selectedYear])
 
   const login = async () => {
     try {
@@ -426,7 +426,13 @@ export default function EmployeeDashboard() {
                   <>
                     <div className="flex justify-center">
                       <div className="p-4 bg-white border-2 border-gray-200 rounded-lg shadow-sm">
-                        <Image src={qrCodeUrl || "/placeholder.svg"} alt="Employee QR Code" className="w-64 h-64" />
+                        <Image 
+                          src={qrCodeUrl || "/placeholder.svg"} 
+                          alt="Employee QR Code" 
+                          width={256}
+                          height={256}
+                          className="w-64 h-64" 
+                        />
                       </div>
                     </div>
                     {profile && (

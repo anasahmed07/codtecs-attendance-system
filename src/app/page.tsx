@@ -74,7 +74,7 @@ export default function AdminDashboard() {
   const login = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -106,21 +106,21 @@ export default function AdminDashboard() {
       }
 
       // Fetch employees
-      const employeesResponse = await fetch(`${API_BASE_URL}/api/employees`, { headers })
+      const employeesResponse = await fetch(`${API_BASE_URL}/api/admin/employees`, { headers })
       if (employeesResponse.ok) {
         const employeesData = await employeesResponse.json()
         setEmployees(employeesData)
       }
 
       // Fetch attendance
-      const attendanceResponse = await fetch(`${API_BASE_URL}/api/attendance`, { headers })
+      const attendanceResponse = await fetch(`${API_BASE_URL}/api/admin/attendance`, { headers })
       if (attendanceResponse.ok) {
         const attendanceData = await attendanceResponse.json()
         setAttendance(attendanceData)
       }
 
       // Fetch stats
-      const statsResponse = await fetch(`${API_BASE_URL}/api/stats`, { headers })
+      const statsResponse = await fetch(`${API_BASE_URL}/api/admin/stats`, { headers })
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
         setStats(statsData)
@@ -132,7 +132,7 @@ export default function AdminDashboard() {
 
   const addEmployee = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/employees`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/employees`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -165,7 +165,7 @@ export default function AdminDashboard() {
   const deleteEmployee = async (employeeId: string) => {
     if (confirm("Are you sure you want to delete this employee?")) {
       try {
-        const response = await fetch(`${API_BASE_URL}/api/employees/${employeeId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/admin/employees/${employeeId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -194,7 +194,7 @@ export default function AdminDashboard() {
 
   const enableEmployeeLogin = async (employeeId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/employees/${employeeId}/enable-login`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/employees/${employeeId}/enable-login`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -217,7 +217,7 @@ export default function AdminDashboard() {
 
   const resetEmployeePassword = async (employeeId: string) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/employees/${employeeId}/reset-password`, {
+      const response = await fetch(`${API_BASE_URL}/api/admin/employees/${employeeId}/reset-password`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
