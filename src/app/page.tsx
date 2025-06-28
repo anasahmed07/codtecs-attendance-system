@@ -8,15 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Users, Clock, TrendingUp, Calendar, Copy } from "lucide-react"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter, DialogClose,} from "@/components/ui/dialog"
 
 interface Employee {
   _id: string
@@ -41,6 +33,9 @@ interface Stats {
   attendance_rate_today: number
   weekly_attendance: number
 }
+
+// Get API base URL from environment
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
 
 export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -79,7 +74,7 @@ export default function AdminDashboard() {
   const login = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/api/auth/admin/login", {
+      const response = await fetch(`${API_BASE_URL}/api/admin/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -111,21 +106,21 @@ export default function AdminDashboard() {
       }
 
       // Fetch employees
-      const employeesResponse = await fetch("http://localhost:8000/api/admin/employees", { headers })
+      const employeesResponse = await fetch(`${API_BASE_URL}/api/employees`, { headers })
       if (employeesResponse.ok) {
         const employeesData = await employeesResponse.json()
         setEmployees(employeesData)
       }
 
       // Fetch attendance
-      const attendanceResponse = await fetch("http://localhost:8000/api/admin/attendance", { headers })
+      const attendanceResponse = await fetch(`${API_BASE_URL}/api/attendance`, { headers })
       if (attendanceResponse.ok) {
         const attendanceData = await attendanceResponse.json()
         setAttendance(attendanceData)
       }
 
       // Fetch stats
-      const statsResponse = await fetch("http://localhost:8000/api/admin/stats", { headers })
+      const statsResponse = await fetch(`${API_BASE_URL}/api/stats`, { headers })
       if (statsResponse.ok) {
         const statsData = await statsResponse.json()
         setStats(statsData)
@@ -137,7 +132,7 @@ export default function AdminDashboard() {
 
   const addEmployee = async () => {
     try {
-      const response = await fetch("http://localhost:8000/api/admin/employees", {
+      const response = await fetch(`${API_BASE_URL}/api/employees`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -170,7 +165,7 @@ export default function AdminDashboard() {
   const deleteEmployee = async (employeeId: string) => {
     if (confirm("Are you sure you want to delete this employee?")) {
       try {
-        const response = await fetch(`http://localhost:8000/api/admin/employees/${employeeId}`, {
+        const response = await fetch(`${API_BASE_URL}/api/employees/${employeeId}`, {
           method: "DELETE",
           headers: {
             Authorization: `Bearer ${token}`,
@@ -199,7 +194,7 @@ export default function AdminDashboard() {
 
   const enableEmployeeLogin = async (employeeId: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/employees/${employeeId}/enable-login`, {
+      const response = await fetch(`${API_BASE_URL}/api/employees/${employeeId}/enable-login`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -208,13 +203,9 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         const result = await response.json()
-        if (result.login_credentials) {
-          alert(
-            `Login enabled!\n\nCredentials:\nEmployee ID: ${result.login_credentials.employee_id}\nPassword: ${result.login_credentials.password}`,
-          )
-        } else {
-          alert(result.message)
-        }
+        alert(
+          `Login enabled successfully!\n\nLogin Credentials:\nEmployee ID: ${result.login_credentials.employee_id}\nPassword: ${result.login_credentials.password}\n\nPlease share these credentials with the employee.`,
+        )
         fetchData(token)
       } else {
         alert("Failed to enable login")
@@ -225,26 +216,27 @@ export default function AdminDashboard() {
   }
 
   const resetEmployeePassword = async (employeeId: string) => {
-    if (confirm("Are you sure you want to reset this employee's password?")) {
-      try {
-        const response = await fetch(`http://localhost:8000/api/admin/employees/${employeeId}/reset-password`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/employees/${employeeId}/reset-password`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
 
-        if (response.ok) {
-          const result = await response.json()
-          setResetCredentials(result.new_credentials)
-          setIsResetDialogOpen(true)
-          fetchData(token)
-        } else {
-          alert("Failed to reset password")
-        }
-      } catch {
-        alert("Error resetting password")
+      if (response.ok) {
+        const result = await response.json()
+        setResetCredentials({
+          employee_id: result.login_credentials.employee_id,
+          password: result.login_credentials.password,
+        })
+        setIsResetDialogOpen(true)
+        fetchData(token)
+      } else {
+        alert("Failed to reset password")
       }
+    } catch {
+      alert("Error resetting password")
     }
   }
 

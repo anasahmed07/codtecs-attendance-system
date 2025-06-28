@@ -10,13 +10,14 @@ import bcrypt
 import secrets
 import string
 from calendar import monthrange
+import os
 
 app = FastAPI(title="Attendance System API", version="1.0.0")
 
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],  # Admin and Employee dashboards
+    allow_origins= os.getenv("CORS_ORIGINS").split(","),  # Admin and Employee dashboards
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -29,16 +30,11 @@ def responder():
 
 
 # MongoDB connection
-client = pymongo.MongoClient("mongodb://localhost:27017/")
-db = client["attendance_system"]
+client = pymongo.MongoClient(os.getenv("MONGO_URI"))
+db = client[os.getenv("DB_NAME")]
 employees_collection = db["employees"]
 attendance_collection = db["attendance"]
 admins_collection = db["admins"]
-
-# JWT settings
-SECRET_KEY = "your-secret-key-here"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 480  # 8 hours
 
 # Security
 security = HTTPBearer()
@@ -97,12 +93,12 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     else:
         expire = datetime.utcnow() + timedelta(minutes=15)
     to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    encoded_jwt = jwt.encode(to_encode, os.getenv("JWT_SECRET_KEY"), algorithm=os.getenv("JWT_ALGORITHM"))
     return encoded_jwt
 
 def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)):
     try:
-        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(credentials.credentials, os.getenv("JWT_SECRET_KEY"), algorithms=[os.getenv("JWT_ALGORITHM")])
         username: str = payload.get("sub")
         user_type: str = payload.get("user_type")
         if username is None:
@@ -147,7 +143,7 @@ async def admin_login(admin_data: AdminLogin):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes= int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES")))
     access_token = create_access_token(
         data={"sub": admin_data.username, "user_type": "admin"}, 
         expires_delta=access_token_expires
@@ -177,7 +173,7 @@ async def employee_login(employee_data: EmployeeLogin):
             headers={"WWW-Authenticate": "Bearer"},
         )
     
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(minutes=int(os.getenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES")))
     access_token = create_access_token(
         data={"sub": employee_data.employee_id, "user_type": "employee"}, 
         expires_delta=access_token_expires
@@ -459,3 +455,6 @@ async def get_statistics(current_user: str = Depends(verify_admin_token)):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("index:app", host="0.0.0.0", port=8000, reload=True)
+
+def handler(request):
+    return app(request)

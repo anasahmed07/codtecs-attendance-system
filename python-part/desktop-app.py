@@ -9,6 +9,7 @@ from pyzbar import pyzbar
 import pymongo
 from datetime import datetime, timedelta
 import winsound
+import os
 
 class AttendanceApp:
     def __init__(self):
@@ -17,10 +18,14 @@ class AttendanceApp:
         self.root.geometry("900x700")
         self.root.configure(bg='#f0f0f0')
         
+        # Environment variables
+        self.mongo_uri = os.getenv("MONGO_URI")
+        self.db_name = os.getenv("DB_NAME")
+        
         # MongoDB connection
         try:
-            self.client = pymongo.MongoClient("mongodb://localhost:27017/")
-            self.db = self.client["attendance_system"]
+            self.client = pymongo.MongoClient(self.mongo_uri)
+            self.db = self.client[self.db_name]
             self.employees_collection = self.db["employees"]
             self.attendance_collection = self.db["attendance"]
             

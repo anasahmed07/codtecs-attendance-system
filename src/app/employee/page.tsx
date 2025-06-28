@@ -40,6 +40,9 @@ interface AttendanceData {
   }
 }
 
+// Get API base URL from environment
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000"
+
 export default function EmployeeDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [token, setToken] = useState("")
@@ -89,7 +92,7 @@ export default function EmployeeDashboard() {
   const login = async () => {
     try {
       setLoading(true)
-      const response = await fetch("http://localhost:8000/api/auth/employee/login", {
+      const response = await fetch(`${API_BASE_URL}/api/auth/employee/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -123,14 +126,14 @@ export default function EmployeeDashboard() {
       }
 
       // Fetch profile
-      const profileResponse = await fetch("http://localhost:8000/api/employee/profile", { headers })
+      const profileResponse = await fetch(`${API_BASE_URL}/api/employee/profile`, { headers })
       if (profileResponse.ok) {
         const profileData = await profileResponse.json()
         setProfile(profileData)
       }
 
       // Fetch QR code
-      const qrResponse = await fetch("http://localhost:8000/api/employee/qr-code", { headers })
+      const qrResponse = await fetch(`${API_BASE_URL}/api/employee/qr-code`, { headers })
       if (qrResponse.ok) {
         const qrData = await qrResponse.json()
         const qrUrl = await QRCode.toDataURL(qrData.qr_data)
@@ -151,9 +154,7 @@ export default function EmployeeDashboard() {
         "Content-Type": "application/json",
       }
 
-      const response = await fetch(`http://localhost:8000/api/employee/attendance?month=${month}&year=${year}`, {
-        headers,
-      })
+      const response = await fetch(`${API_BASE_URL}/api/employee/attendance?month=${month}&year=${year}`, { headers })
 
       if (response.ok) {
         const data = await response.json()

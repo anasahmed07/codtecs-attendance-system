@@ -6,7 +6,7 @@ import os
 # Read from environment variables or use default values
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 DB_NAME = "attendance_system"
-ADMIN_USERNAME = "anasahmedshaikh.work@gmail.com"
+ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin123"
 # ---------------------
 
