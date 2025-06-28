@@ -15,13 +15,13 @@ import os
 app = FastAPI(title="Attendance System API", version="1.0.0")
 
 # CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins= os.getenv("CORS_ORIGINS").split(","),  # Admin and Employee dashboards
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins= os.getenv("CORS_ORIGINS").split(","),  # Admin and Employee dashboards
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"],
+# )
 
 @app.get("/")
 def responder():
